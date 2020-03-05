@@ -1,0 +1,19 @@
+//create view monthly sales
+CREATE VIEW `monthlysales` AS select date_format(`Date`,'%m-%Y') AS `monthly_date`,year(`Date`) AS `year`,monthname(`Date`) AS `month_name`,sum(`Amount`) AS `sales_made` from `sales` group by monthly_date, year, month_name
+
+//create view mostselingproducts
+CREATE  VIEW `mostsellingproducts` AS select `ProductName` AS `ProductName`,sum(`Quantity`) AS `Qty`,sum(`Cost`) AS `TotalSales` from `sales` group by `ProductName` order by sum(`Cost`) desc limit 10
+
+//create view cashiersperformance
+CREATE VIEW `cashiersperformance` AS select `CashierName` AS `Cashier`,sum(`Cost`) AS `VolumeofConductedSales`,round(((sum(`Cost`) * 100) / (select sum(`monthlysales`.`sales_made`) from `monthlysales`)),2) AS `percent` from `sales` group by `CashierName` order by sum(`Cost`) desc
+
+//create view  best customers
+CREATE VIEW `bestcustomers` AS select `Customer` AS `Customer`,sum(`Cost`) AS `VolumeofSales`,round(((sum(`Cost`) * 100) / (select sum(`monthlysales`.`sales_made`) from `monthlysales`)),2) AS `percent` from `sales` group by `Customer` order by sum(`Cost`) desc limit 10
+
+
+
+
+
+
+mysql > SET GLOBAL sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));
+SET GLOBAL sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));
